@@ -1,7 +1,7 @@
 /*
   file: andys_menu/example.ino
 
-  Author: Andy Idsinga ( https://twitter.com/andyidsinga )
+  Author: Andy Idsinga ( https://twitter.com/andyidsinga ), Copyright 2016
 
   The library has been tested with Arduino UNO and Micro boards
 
@@ -71,15 +71,16 @@ void setup(){
   should look familiar - the arduino loop function - called over and over
  */
 void loop(){
+
   /* run the top level menu.
      Note: I'm not passing anything for the context arg, but
      that can be your goodies, and will not be touched by the menu code. */
   theMenu.run(
-    "=== Example Top Menu ===",
-    topMenu, 
-    sizeof(topMenu)/sizeof(AndysMenuItem), 
-    (void*)0,
-    menu_ErrorHandler);
+	      "=== Example Top Menu ===",
+	      topMenu, 
+	      sizeof(topMenu)/sizeof(AndysMenuItem), 
+	      (void*)0,
+	      menu_ErrorHandler);
 }
 
 
@@ -98,8 +99,8 @@ void topmenu_Ok(void* context){
   char promptCh = 0;
 
   promptCh = theMenu.prompt("Hit ok when ready to do debug the thing...",
-                         okPrompt,
-                         sizeof(okPrompt)/sizeof(AndysPromptItem));
+			    okPrompt,
+			    sizeof(okPrompt)/sizeof(AndysPromptItem));
   if(promptCh == 'o') {
     Serial.println("you hit ok, the example code thanks you");
   }
@@ -109,13 +110,13 @@ void topmenu_Ok(void* context){
 
 void topmenu_YesNo(void* context){
   //Serial.print("+,"); Serial.println(__FUNCTION__);
-
+  
   /* run the YesNo prompt and report input*/
   char promptCh = 0;
-
+  
   promptCh = theMenu.prompt("Is everything totally cool?",
-                         yesNoPrompt,
-                         sizeof(yesNoPrompt)/sizeof(AndysPromptItem));
+			    yesNoPrompt,
+			    sizeof(yesNoPrompt)/sizeof(AndysPromptItem));
   if(promptCh == 'y') {
     Serial.println("cool, everything is ok");
   }
@@ -131,11 +132,11 @@ void topmenu_SubMenu(void* context){
 
   /* run our predefined submenu */
   theMenu.run(
-    "=== Example Sub Menu ===",
-    subMenu, 
-    sizeof(subMenu)/sizeof(AndysMenuItem), 
-    (void*)0,
-    menu_ErrorHandler);
+	      "=== Example Sub Menu ===",
+	      subMenu, 
+	      sizeof(subMenu)/sizeof(AndysMenuItem), 
+	      (void*)0,
+	      menu_ErrorHandler);
   
   //Serial.print("-,"); Serial.println(__FUNCTION__);
 }
@@ -143,7 +144,7 @@ void topmenu_SubMenu(void* context){
 void submenu_Yay(void* context){
 
   //Serial.print("+,"); Serial.println(__FUNCTION__);
-
+  
   Serial.println("YAY - the submenu works!");
   
   //Serial.print("-,"); Serial.println(__FUNCTION__);
