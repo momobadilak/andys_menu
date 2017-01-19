@@ -43,9 +43,12 @@ struct AndysPromptItem
 
 class AndysMenu
 {
+ protected:
+  HardwareSerial* mpSerial;
+  
  public:
   AndysMenu();
-  void setup(uint32_t serialSpeed = 9600);
+  void setup(uint32_t serialSpeed = 9600, HardwareSerial* altSerial = NULL);
   void run( const char* menuTitle,
 	    const AndysMenuItem  *items,
 	    uint8_t numItems,

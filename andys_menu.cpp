@@ -11,8 +11,16 @@ AndysMenu::AndysMenu() {
   //nothing to do here yet
 }
 
-void AndysMenu::setup(uint32_t serialSpeed) {
-  Serial.begin(serialSpeed);
+void AndysMenu::setup(uint32_t serialSpeed, HardwareSerial* altSerial) {
+
+  if(altSerial != NULL){
+    mpSerial = altSerial;
+  }
+  else {
+    mpSerial = (HardwareSerial*)&Serial;
+  }
+  
+  mpSerial->begin(serialSpeed);
 }
 
 void AndysMenu::run (
@@ -22,7 +30,7 @@ void AndysMenu::run (
     void* userContext,
     andyMenuErrorFn errorFn )
 {
-  //Serial.println("+AndysMenu::run");
+  //mpSerial->println("+AndysMenu::run");
 
   uint8_t menuState = 0;
   while(menuState != 3) {
@@ -30,29 +38,29 @@ void AndysMenu::run (
     switch(menuState) {
       /* display menu */
       case 0:
-	Serial.println(menuTitle);
+	mpSerial->println(menuTitle);
 	for (uint8_t x = 0; x < numItems; x++){
-	  Serial.print("[");
-	  Serial.print((items + x)->itemKeyChar);
-	  Serial.print("]:");
-	  Serial.println((items + x)->itemDescString);
+	  mpSerial->print("[");
+	  mpSerial->print((items + x)->itemKeyChar);
+	  mpSerial->print("]:");
+	  mpSerial->println((items + x)->itemDescString);
 	}
 
 	/* wait for a menu key and call the handler if it exists */
-	Serial.println("[x]:exit");
-	Serial.print("$ ");
+	mpSerial->println("[x]:exit");
+	mpSerial->print("$ ");
 	menuState = 1;
       break;
 
     /* read input state*/
     case 1:
       {
-	int userChar = Serial.read();
+	int userChar = mpSerial->read();
 	if(userChar != -1 && userChar != 0x0D && userChar != 0x0A){
 	  /* echo back to user */
-	  Serial.print((char)userChar);
-	  //Serial.print(userChar,HEX);
-	  Serial.println("");
+	  mpSerial->print((char)userChar);
+	  //mpSerial->print(userChar,HEX);
+	  mpSerial->println("");
 	  if(userChar == 'x') {
 	    menuState = 2;
 	  }
@@ -69,7 +77,7 @@ void AndysMenu::run (
 	      }
 	    }
 	    if(handled == false) {
-	      Serial.println("unknown item, please try again.");
+	      mpSerial->println("unknown item, please try again.");
 	    }
 	    /* switch back to displaying the menu */
 	    menuState = 0;
@@ -79,7 +87,7 @@ void AndysMenu::run (
       break;
 
     case 2:
-      Serial.println("exiting...");
+      mpSerial->println("exiting...");
       menuState = 3;
       break;
 
@@ -90,7 +98,7 @@ void AndysMenu::run (
     }
   }
 
-  //Serial.println("-AndysMenu::run");
+  //mpSerial->println("-AndysMenu::run");
 }
 
 char AndysMenu::prompt(
@@ -104,30 +112,30 @@ char AndysMenu::prompt(
     switch(menuState){
       /* display menu */
       case 0:
-	Serial.println(promptMsg);
+	mpSerial->println(promptMsg);
 	for (uint8_t x = 0; x < numItems; x++){
-	  Serial.print("[");
-	  Serial.print((items + x)->itemKeyChar);
-	  Serial.print("]:");
-	  Serial.println((items + x)->itemDescString);
+	  mpSerial->print("[");
+	  mpSerial->print((items + x)->itemKeyChar);
+	  mpSerial->print("]:");
+	  mpSerial->println((items + x)->itemDescString);
 	}
 
 	/* wait for a menu key and call the handler if it exists */
-	Serial.print("$ ");
+	mpSerial->print("$ ");
 	menuState = 1;
       break;
 
     /* read input state*/
     case 1:
       {
-	int userChar = Serial.read();
+	int userChar = mpSerial->read();
 	if(userChar != -1 && userChar != 0x0D && userChar != 0x0A){
 
 	  /* echo back to user */
-	  Serial.print((char)userChar);
-	  //Serial.print(userChar,HEX);
+	  mpSerial->print((char)userChar);
+	  //mpSerial->print(userChar,HEX);
 
-	  Serial.println("");
+	  mpSerial->println("");
 
 	  /* process check to see if valid menu character and exec
 	     handler function */
@@ -141,7 +149,7 @@ char AndysMenu::prompt(
 	    }
 	  }
 	  if(handled == false) {
-	    Serial.println("unknown item, please try again.");
+	    mpSerial->println("unknown item, please try again.");
 	    /* displaying the menu again */
 	    menuState = 0;
 	  }
@@ -154,7 +162,7 @@ char AndysMenu::prompt(
       break;
 
     default:
-      Serial.println("weirdness, unknown prompt menu state!");
+      mpSerial->println("weirdness, unknown prompt menu state!");
       break;
     }
   }
